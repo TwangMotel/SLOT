@@ -1,0 +1,42 @@
+[
+	{
+		"title": "option_test",
+		"tags": "",
+		"body": "Driver: Hey, you falling asleep over there?\n[[I'm sorry|Sorry]]\n[[Ya caught me|Caught]]\n[[Fuck no!!|FuckNo]]",
+		"position": {
+			"x": 512,
+			"y": 204
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Sorry",
+		"tags": "",
+		"body": "<<set $isTalking to true>>\nCW: I know you need extra eyes on these winding mountain roads.",
+		"position": {
+			"x": 235,
+			"y": 445
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Caught",
+		"tags": "",
+		"body": "<<set $isTalking to true>>\nCW: These winding mountain roads always put me down.",
+		"position": {
+			"x": 509,
+			"y": 457
+		},
+		"colorID": 0
+	},
+	{
+		"title": "FuckNo",
+		"tags": "",
+		"body": "<<set $isTalking to true>>\nCW: Real men don't sleep!!",
+		"position": {
+			"x": 783,
+			"y": 451
+		},
+		"colorID": 0
+	}
+]

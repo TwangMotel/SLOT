@@ -1,0 +1,42 @@
+[
+	{
+		"title": "RobberySetUp",
+		"tags": "",
+		"body": "Driver: Hey buddy, are you interested in a good time? Maybe make some $$$ too?\n[[You betcha'!|Yes]]\n[[No thanks:)|No]]\n[[Fuck off!|AgroNo]]",
+		"position": {
+			"x": 538,
+			"y": 195
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Yes",
+		"tags": "",
+		"body": "CW: I'm in! Tell me more\nDriver: I knew it! Take a right at the fork and follow me ahead. ",
+		"position": {
+			"x": 861,
+			"y": 379
+		},
+		"colorID": 0
+	},
+	{
+		"title": "No",
+		"tags": "",
+		"body": "CW: No thanks, pal! Appreciate the offer though!\nDriver: Don't be naive! I'll meet you up the road. Take a right at the fork ahead. ",
+		"position": {
+			"x": 536,
+			"y": 448
+		},
+		"colorID": 0
+	},
+	{
+		"title": "AgroNo",
+		"tags": "",
+		"body": "CW: I don't know you!! Bugger off!\nDriver: Hey easy there! Well if you change your mind Just swing a right at the fork up the road. ",
+		"position": {
+			"x": 251,
+			"y": 429
+		},
+		"colorID": 0
+	}
+]

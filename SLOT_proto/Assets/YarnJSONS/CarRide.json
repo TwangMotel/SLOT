@@ -1,0 +1,82 @@
+[
+	{
+		"title": "CarRide",
+		"tags": "",
+		"body": "<<play Driver DriverTalking>>\nDriver: Hoss, if we don’t keep talking, I’m gonna slump over and turn this whole band into ground beef. \nDriver: Ask me somethin' -- anything to keep this here brain awake.\n<<play Driver DriverIdle>>\n[[Armless Uncle Clyde|Clyde]]\n[[Stolen Hit Song.|Roscoe]]\n[[Please Shut Up|Sleep]]\n\n",
+		"position": {
+			"x": 549,
+			"y": 119
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Clyde",
+		"tags": "",
+		"body": "<<play Cw CwTalking>>\nCW: Say, how'd your old Uncle Clyde lose both his arms?\n<<play Cw CwIdle>>\n<<play Driver DriverTalking>>\nDriver: Never did find that out for sure. But he swears his wife ripped ‘em off after she found him performing some ‘animal husbandry’ out in the sty.\nDriver: Say, hoss, this cold weather got me hungry. Can I get one of those cheese sandwiches?\n<<play Driver DriverIdle>>\n[[Sure, pal|CheeseYes]] [[Get it yourself|CheeseNo]] [[(LIE) Ain't none left|CheeseLie]]\n",
+		"position": {
+			"x": 300,
+			"y": 387
+		},
+		"colorID": 6
+	},
+	{
+		"title": "Roscoe",
+		"tags": "",
+		"body": "<<play Cw CwTalking>>\nCW: Didn't that Roscoe Hutchins steal a hit song from you?\n<<play Cw CwIdle>>\n<<play Driver DriverTalking>>\nDriver: Greasy sumbitch never had a hit he didn't steal.\nDriver: I had the words to ‘Your Cheatin’ Nose’ (Will Smell on You) on the brim of my hat and damned if the bastard didn’t steal it off my head and sell it for half a million.\nDriver: Say, hoss, this cold weather got me hungry. Can I get one of those cheese sandwiches?\n<<play Driver DriverIdle>>\n[[Sure, pal|CheeseYes]] [[Get it yourself|CheeseNo]] [[(LIE) Ain't none left|CheeseLie]]\n",
+		"position": {
+			"x": 549,
+			"y": 394
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Sleep",
+		"tags": "",
+		"body": "<<play Cw CwTalking>>\nCW: I gotta get some goddamn shuteye. If I never wake up, who cares.\n<<play Driver DriverTalking>>\nDriver: Hell, CW, that's a hit song right there. You cranky bastard.\nDriver: Say, hoss, this cold weather got me hungry. Can I get one of those cheese sandwiches?\n<<play Driver DriverIdle>>\n[[Sure, pal|CheeseYes]] [[Get it yourself|CheeseNo]] [[(LIE) Ain't none left|CheeseLie]]\n",
+		"position": {
+			"x": 817,
+			"y": 396
+		},
+		"colorID": 0
+	},
+	{
+		"title": "CheeseYes",
+		"tags": "",
+		"body": "<<play Cw CwTalking>>\nCW: Here you are feller, get you some of this cheddar. \n<<play Cw CwIdle>>\n<<play Driver DriverTalking>>\nDriver: Thanks, pardner. Reminds me what my old Aunt Dottie used to say --\nDriver: \"Life don't get better than munchin' on cheddar\".\nDriver: Though that old bat ripped her husband's arms off, so I'd caution you against takin' her advice.\n[[Crash]] ",
+		"position": {
+			"x": 299,
+			"y": 644
+		},
+		"colorID": 0
+	},
+	{
+		"title": "CheeseNo",
+		"tags": "",
+		"body": "<<play Cw Cwtalking>>\nCW: Damn it if you ain't had six of em already, you tub of lard. I won't allow it.\n<<play Cw CwIdle>>\n<<play Driver DriverTalking>>\nDriver: Well, that's a fine thing to say. You're a real piece of work, CW.\n[[Crash]]",
+		"position": {
+			"x": 545,
+			"y": 646
+		},
+		"colorID": 0
+	},
+	{
+		"title": "CheeseLie",
+		"tags": "",
+		"body": "<<set $cheeseLie to true>>\n<<play Cw CwTalking>>\nCW: The cold give you amnesia too? They're all gone, pal.\n<<play Cw CwIdle>>\n<<play Driver DriverTalking>>\nDriver: Hm, could've sworn we had a few left.\n[[Crash]]",
+		"position": {
+			"x": 790,
+			"y": 646
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Crash",
+		"tags": "",
+		"body": "Driver: Another 65 miles to go. Nothin' but nice, clear, mountain...\n<<play Cw CwShocked>>\n<<play Driver DriverShocked>>\nDriver: WHAT IN THE SAM HELL?!!\n<<load VanExt>>",
+		"position": {
+			"x": 540,
+			"y": 886
+		},
+		"colorID": 0
+	}
+]
