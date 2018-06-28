@@ -71,14 +71,26 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
     /// dialogue is active and to restore them when dialogue ends
     public RectTransform gameControlsContainer;
 
+    //Store all portraits used in this scene
     public Image[] portraits;
 
-    private string speakerName; //Name of character currently speaking
+    //Store click to skip buttons here
+    public Button clickToSkip;
+
+    //bool that tracks of clickToSkip button is pushed
+    private bool skipContinue;
+
+    //Name of character currently speaking
+    private string speakerName;
+
+    //Declare Dialogue Runner class
+    DialogueRunner dialogueRunner;
 
 
     void Awake()
     {
-
+        //Assign Dialogue Runner class
+        dialogueRunner = GetComponent<DialogueRunner>();
 
         // Start by hiding the container, line and option buttons
         if (dialogueContainer != null)
@@ -86,14 +98,20 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
 
         lineText.gameObject.SetActive(false);
 
-        foreach (var button in optionButtons) {
+        foreach (var button in optionButtons)
+        {
             button.gameObject.SetActive(false);
         }
 
-        foreach(var image in portraits)
+        foreach (var image in portraits)
         {
             image.gameObject.SetActive(false);
         }
+
+        //Hide click to skip button
+        if (clickToSkip != null)
+            clickToSkip.gameObject.SetActive(false);
+
 
         // Hide the continue prompt if it exists
         if (continuePrompt != null)
@@ -104,32 +122,40 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
 
     /// Show a line of dialogue, gradually
     public override IEnumerator RunLine(Yarn.Line line)
-    { 
-        GameObject speaker; // Holds GameObject of currently speaking character
+    {
+        // Holds GameObject of currently speaking character
+        GameObject speaker;
+
+        //Set clickToSkip button to active
+        clickToSkip.gameObject.SetActive(true);
+
         var speakerStringBuilder = new StringBuilder();
-        
-            //Check to see who is speaking
-            foreach (char c in line.text)
+
+        //Check to see who is speaking
+        foreach (char c in line.text)
+        {
+            if (c != ':')
             {
-                if(c != ':')
-                {
-                    speakerStringBuilder.Append(c);
-                    speakerName = speakerStringBuilder.ToString();
+                speakerStringBuilder.Append(c);
+                speakerName = speakerStringBuilder.ToString();
             }
-                else
-                {
-                    break;
-                }
+            else
+            {
+                break;
             }
+        }
 
-        speaker = GameObject.Find(speakerName); //Find the name found from the Yarn Line
-        //GameObject speakerPortrait = GameObject.Find(speakerName + "_portrait");
+        //Find the name found from the Yarn Line
+        speaker = GameObject.Find(speakerName);
 
-        if(speaker!=null) //If found, put dialogue container at the speakers position
+        //If found, put dialogue container at the speakers position
+        if (speaker != null)
         {
             dialogueContainer.transform.position = speaker.transform.position;
         }
 
+
+        //If portrait is found for character that is speaking in Yarn file, set it active. 
         foreach (var image in portraits)
         {
             if (image.name == speakerName + "_portrait")
@@ -138,145 +164,168 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
             }
         }
 
-        line.text = line.text.Remove(0, speakerName.Length + 2); //Removes Character name, colon, and space from the displayed dialogue
+        //Removes Character name, colon, and space from the displayed dialogue
+        line.text = line.text.Remove(0, speakerName.Length + 2);
+
+
         // Show the text
-        lineText.gameObject.SetActive(true);
+        if (textSpeed > 0.0f)
+        {
+            lineText.gameObject.SetActive(true);
 
-            if (textSpeed > 0.0f)
+            // Display the line one character at a time
+            var stringBuilder = new StringBuilder();
+            foreach (char c in line.text)
             {
+                stringBuilder.Append(c);
+                lineText.text = stringBuilder.ToString();
+                yield return new WaitForSeconds(textSpeed);
 
-                // Display the line one character at a time
-                var stringBuilder = new StringBuilder();
-                foreach (char c in line.text)
+                //if skipContinue button is pushed, display line immediately
+                if (skipContinue == true)
                 {
-                    stringBuilder.Append(c);
-                    lineText.text = stringBuilder.ToString();
-                    yield return new WaitForSeconds(textSpeed);
+                    skipContinue = false;
+                    lineText.text = line.text;
+                    break;
                 }
+
             }
-            else
-            {
-                // Display the line immediately if textSpeed == 0
-                lineText.text = line.text;
-            }
+        }
+        else
+        {
+            // Display the line immediately if textSpeed == 0
+            lineText.text = line.text;
+        }
 
-            // Show the 'press any key' prompt when done, if we have one
-            if (continuePrompt != null)
-                continuePrompt.SetActive(true);
+        //Turn off clickToSkip button
+        clickToSkip.gameObject.SetActive(false);
 
-            // Wait for any user input
-            while (Input.anyKeyDown == false)
-            {
-                yield return null;
-            }
+        // Show the 'press any key' prompt when done, if we have one
+        if (continuePrompt != null)
+            continuePrompt.SetActive(true);
 
 
-            // Hide the text,prompt, and portrait
-            //lineText.gameObject.SetActive(false);
-            
+        while (Input.anyKeyDown == false)
+        {
+            yield return null;
+        }
 
         if (continuePrompt != null)
-                continuePrompt.SetActive(false);
+            continuePrompt.SetActive(false);
 
-        speakerName = string.Empty; // Clear the speaker name
+        // Clear the speaker name
+        speakerName = string.Empty;
+        //"Unpush" skipToClick button 
+        skipContinue = false;
 
-        
     }
-          
 
-        /// Show a list of options, and wait for the player to make a selection.
-        public override IEnumerator RunOptions (Yarn.Options optionsCollection, 
-                                                Yarn.OptionChooser optionChooser)
+
+    /// Show a list of options, and wait for the player to make a selection.
+    public override IEnumerator RunOptions(Yarn.Options optionsCollection,
+                                            Yarn.OptionChooser optionChooser)
+    {
+        // Do a little bit of safety checking
+        if (optionsCollection.options.Count > optionButtons.Count)
         {
-            // Do a little bit of safety checking
-            if (optionsCollection.options.Count > optionButtons.Count) {
-                Debug.LogWarning("There are more options to present than there are" +
-                                 "buttons to present them in. This will cause problems.");
-            }
-
-            // Display each option in a button, and make it visible
-            int i = 0;
-            foreach (var optionString in optionsCollection.options) {
-                optionButtons [i].gameObject.SetActive (true);
-                optionButtons [i].GetComponentInChildren<Text> ().text = optionString;
-                i++;
-            }
-
-            // Record that we're using it
-            SetSelectedOption = optionChooser;
-
-            // Wait until the chooser has been used and then removed (see SetOption below)
-            while (SetSelectedOption != null) {
-                yield return null;
-            }
-
-            // Hide all the buttons
-            foreach (var button in optionButtons) {
-                button.gameObject.SetActive (false);
-            }
+            Debug.LogWarning("There are more options to present than there are" +
+                             "buttons to present them in. This will cause problems.");
         }
 
-        /// Called by buttons to make a selection.
-        public void SetOption (int selectedOption)
+        // Display each option in a button, and make it visible
+        int i = 0;
+        foreach (var optionString in optionsCollection.options)
         {
-
-            // Call the delegate to tell the dialogue system that we've
-            // selected an option.
-            SetSelectedOption (selectedOption);
-
-            // Now remove the delegate so that the loop in RunOptions will exit
-            SetSelectedOption = null; 
+            optionButtons[i].gameObject.SetActive(true);
+            optionButtons[i].GetComponentInChildren<Text>().text = optionString;
+            i++;
         }
 
-        /// Run an internal command.
-        public override IEnumerator RunCommand (Yarn.Command command)
-        {
-            // "Perform" the command
-            Debug.Log ("Command: " + command.text);
+        // Record that we're using it
+        SetSelectedOption = optionChooser;
 
-            yield break;
+        // Wait until the chooser has been used and then removed (see SetOption below)
+        while (SetSelectedOption != null)
+        {
+            yield return null;
         }
 
-        /// Called when the dialogue system has started running.
-        public override IEnumerator DialogueStarted ()
+        // Hide all the buttons
+        foreach (var button in optionButtons)
         {
-            Debug.Log ("Dialogue starting!");
+            button.gameObject.SetActive(false);
+        }
+    }
 
-            // Enable the dialogue controls.
-            if (dialogueContainer != null)
-                dialogueContainer.SetActive(true);
+    /// Called by buttons to make a selection.
+    public void SetOption(int selectedOption)
+    {
 
-            // Hide the game controls.
-            if (gameControlsContainer != null) {
-                gameControlsContainer.gameObject.SetActive(false);
-            }
+        // Call the delegate to tell the dialogue system that we've
+        // selected an option.
+        SetSelectedOption(selectedOption);
 
-            yield break;
+        // Now remove the delegate so that the loop in RunOptions will exit
+        SetSelectedOption = null;
+    }
+
+    /// Run an internal command.
+    public override IEnumerator RunCommand(Yarn.Command command)
+    {
+        // "Perform" the command
+        Debug.Log("Command: " + command.text);
+
+        yield break;
+    }
+
+    /// Called when the dialogue system has started running.
+    public override IEnumerator DialogueStarted()
+    {
+        Debug.Log("Dialogue starting!");
+
+        // Enable the dialogue controls.
+        if (dialogueContainer != null)
+            dialogueContainer.SetActive(true);
+
+        // Hide the game controls.
+        if (gameControlsContainer != null)
+        {
+            gameControlsContainer.gameObject.SetActive(false);
         }
 
-        /// Called when the dialogue system has finished running.
-        public override IEnumerator DialogueComplete ()
+        yield break;
+    }
+
+    /// Called when the dialogue system has finished running.
+    public override IEnumerator DialogueComplete()
+    {
+        Debug.Log("Complete!");
+
+        // Hide the dialogue interface.
+        if (dialogueContainer != null)
+            dialogueContainer.SetActive(false);
+
+        // Show the game controls.
+        if (gameControlsContainer != null)
         {
-            Debug.Log ("Complete!");
-
-            // Hide the dialogue interface.
-            if (dialogueContainer != null)
-                dialogueContainer.SetActive(false);
-
-            // Show the game controls.
-            if (gameControlsContainer != null) {
-                gameControlsContainer.gameObject.SetActive(true);
-            }
+            gameControlsContainer.gameObject.SetActive(true);
+        }
 
         foreach (var image in portraits)
         {
             image.gameObject.SetActive(false);
         }
 
-
         yield break;
-        }
 
-   
+    }
+
+    public void SkipContinueClick()
+    {
+        skipContinue = true;
+    }
+
+
+
 }
 
