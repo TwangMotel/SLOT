@@ -1,10 +1,10 @@
 [
 	{
-		"title": "Robbery",
+		"title": "Robbery2",
 		"tags": "",
 		"body": "Driver: Give me all your money, rube!\nNarrator: He sticks a revolver in your face and rips you off.\nNarrator: You lose $2\n<<set $cash = $cash-2>>\n\n",
 		"position": {
-			"x": 540,
+			"x": 538,
 			"y": 260
 		},
 		"colorID": 0
