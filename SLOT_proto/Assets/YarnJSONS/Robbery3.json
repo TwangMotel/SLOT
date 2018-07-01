@@ -1,0 +1,12 @@
+[
+	{
+		"title": "Robbery3",
+		"tags": "",
+		"body": "Pappy: Give me all your money, rube!\nNarrator: He sticks a gun in your face and steals your trousers.\n<<set $cash = $cash - 2>>\nNarrator: You lose $2",
+		"position": {
+			"x": 540,
+			"y": 259
+		},
+		"colorID": 0
+	}
+]
