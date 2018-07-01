@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using JSNodeMap;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Agent))]
 public class ClickMove : MonoBehaviour {
@@ -7,8 +8,11 @@ public class ClickMove : MonoBehaviour {
 	public bool active;
 	public float maxDistance = 1000f;
 
+    
+
 	void Awake () {
-		agent = GetComponent<Agent>();
+        agent = GetComponent<Agent>();
+       
 	}
 	
 	void Update () {
@@ -18,10 +22,14 @@ public class ClickMove : MonoBehaviour {
 
 			if (Physics.Raycast(ray, out hit, maxDistance)) {
 				Node hitNode = hit.transform.GetComponent<Node>();
-				if (hitNode != null) {
+                List<Node> neighbors = Pathfinding.GetNeighbors(hitNode);
+				if (hitNode != null && neighbors.Contains(agent.currentNode)) {
 					agent.MoveToTarget(hitNode);
 				}
 			}
 		}
 	}
+
+    
+    
 }

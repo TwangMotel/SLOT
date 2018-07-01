@@ -155,6 +155,7 @@ namespace JSNodeMap {
                         // transform.localRotation = currentNode.transform.localRotation;
 
                         var nodeYarn = currentNode.GetComponent<NodeYarn>(); // Access NodeYarn component of current node, assuming it has one.
+                        if (nodeYarn != null)
                         FindObjectOfType<DialogueRunner>().StartDialogue(nodeYarn.talkToNode); //Runs yarn files 
                         
                         // Raise target arrive event
