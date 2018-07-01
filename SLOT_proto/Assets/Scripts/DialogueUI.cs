@@ -72,7 +72,15 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
     public RectTransform gameControlsContainer;
 
     //Store all portraits used in this scene
-    public Image[] portraits;
+    public List<Sprite> portraits;
+
+    //permanent, unaltered list of portraits. Used when the portraits list being altered needs repopulated
+    private List<Sprite> fullPortraits = new List<Sprite>();
+
+    //randomly generated number that will be used to access portraits in the portraits list
+    private int index;
+
+    private GameObject NPC_Portrait;
 
     //Store click to skip buttons here
     public Button clickToSkip;
@@ -85,6 +93,8 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
 
     //Declare Dialogue Runner class
     DialogueRunner dialogueRunner;
+
+
 
 
     void Awake()
@@ -103,10 +113,10 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
             button.gameObject.SetActive(false);
         }
 
-        foreach (var image in portraits)
-        {
-            image.gameObject.SetActive(false);
-        }
+        //Hide the NPC portrait
+        NPC_Portrait = GameObject.Find("NPC_portrait");
+        NPC_Portrait.SetActive(false);
+
 
         //Hide click to skip button
         if (clickToSkip != null)
@@ -116,6 +126,10 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
         // Hide the continue prompt if it exists
         if (continuePrompt != null)
             continuePrompt.SetActive(false);
+
+        //Populate fullPortraits list with the Portraits list
+        fullPortraits.AddRange(portraits);
+
 
     }
 
@@ -146,23 +160,35 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
         }
 
         //Find the name found from the Yarn Line
-        speaker = GameObject.Find(speakerName);
+        if(speakerName == "CW")
+        {
+            speaker = GameObject.Find("CW");
+        }
+        else if(speakerName == "Narrator")
+        {
+            speaker = GameObject.Find("Narrator");
+            lineText.fontStyle = FontStyle.Italic;
+        }
+        else
+        {
+            speaker = GameObject.Find("NPC");
+        }
+
 
         //If found, put dialogue container at the speakers position
         if (speaker != null)
         {
             dialogueContainer.transform.position = speaker.transform.position;
         }
-
-
-        //If portrait is found for character that is speaking in Yarn file, set it active. 
-        foreach (var image in portraits)
+        else
         {
-            if (image.name == speakerName + "_portrait")
-            {
-                image.gameObject.SetActive(true);
-            }
+            Debug.Log("speaker does not have a dialogue container!");
         }
+
+
+        //Show the NPC portrait 
+        NPC_Portrait.SetActive(true);
+
 
         //Removes Character name, colon, and space from the displayed dialogue
         line.text = line.text.Remove(0, speakerName.Length + 2);
@@ -217,6 +243,9 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
         speakerName = string.Empty;
         //"Unpush" skipToClick button 
         skipContinue = false;
+        //If text is italic, back to normal
+        if (lineText.fontStyle == FontStyle.Italic)
+            lineText.fontStyle = FontStyle.Normal;       
 
     }
 
@@ -292,6 +321,12 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
         {
             gameControlsContainer.gameObject.SetActive(false);
         }
+        //Get a random number to select a random portrait
+        index = Random.Range(0, portraits.Count);
+
+        //Set the NPC Portrait sprite to a random sprite in our list
+        Image NPC_image = NPC_Portrait.GetComponent<Image>();
+        NPC_image.sprite = portraits[index];
 
         yield break;
     }
@@ -311,10 +346,20 @@ public class DialogueUI : Yarn.Unity.DialogueUIBehaviour
             gameControlsContainer.gameObject.SetActive(true);
         }
 
-        foreach (var image in portraits)
-        {
-            image.gameObject.SetActive(false);
-        }
+        //Hide the NPC portrait
+        NPC_Portrait.SetActive(false);
+
+        //Remove selected sprite 
+        Image NPC_image = NPC_Portrait.GetComponent<Image>();
+        NPC_image = null;
+
+        //Remove portrait from usedPortrait lsit
+        portraits.RemoveAt(index);
+
+        //If all portraits have been used, repopulate the list
+        if (portraits.Count == 0)
+            portraits.AddRange(fullPortraits);
+            
 
         yield break;
 
