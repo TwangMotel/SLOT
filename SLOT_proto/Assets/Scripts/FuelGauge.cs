@@ -9,10 +9,13 @@ public class FuelGauge : MonoBehaviour
     public float fuelLevel;
     GameObject needle;
 
+    public float fuelEfficiency;
+
     private void Start()
     {
          needle = GameObject.Find("needle");
         fuelLevel = 0f;
+        fuelEfficiency = 8f;
     }
 
     public void Update()
