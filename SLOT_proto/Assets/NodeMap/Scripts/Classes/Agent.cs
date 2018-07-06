@@ -117,7 +117,7 @@ namespace JSNodeMap {
 
 				transform.position = Vector3.MoveTowards(transform.position, curWayPoint, moveDist);
 
-                fuelGauge.fuelLevel -= distTraveled/55f; //Rotates the needle based on the distance traveled
+                //fuelGauge.fuelLevel -= distTraveled/55f; //Rotates the needle based on the distance traveled
 
 				// Check if passed next marker
 				if (nextMarkerIndex < markerPosList.Count && percentTraveled >= markerPosList[nextMarkerIndex]) {
@@ -150,6 +150,7 @@ namespace JSNodeMap {
 						doMoveToTarget = false;
 						targetNode = null;
 						distTraveled = 0;
+                        fuelGauge.fuelLevel -= fuelGauge.fuelEfficiency;
                         // In case it was going up a hill, set its rotation back to match its end point
                         // May not be desirable for maps that don't use elevation changes
                         // transform.localRotation = currentNode.transform.localRotation;
